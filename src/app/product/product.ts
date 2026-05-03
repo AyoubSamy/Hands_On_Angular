@@ -3,6 +3,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import {ParseTreeResult} from '@angular/compiler';
 import {ProductService} from '../services/productService';
 
+
 @Component({
   selector: 'app-product',
   templateUrl: './product.html',
@@ -19,13 +20,27 @@ export class Product implements OnInit {
   }
 
   getAllProducts(){
-    this.products = this.productservice.getAllProducts();
+    this.productservice.getAllProducts().subscribe({
+      next : resp => {
+        this.products = resp;
+      },
+      error :err => {
+        console.log(err)
+      }
+    });
   }
 
   handelDelete(product: any) {
     let v = confirm(" etes vous sur de supprimer ce produit ");
     if (v==true){
-      this.productservice.deleteProduct(product);
+      this.productservice.deleteProduct(product).subscribe({
+        next : value =>  {
+          this.getAllProducts();
+        },
+        error : err => {
+          console.log(err)
+        }
+      });
       this.getAllProducts();
     }
   }
